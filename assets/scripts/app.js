@@ -10,6 +10,25 @@ function clearUserInput() {
   }
 }
 
+function renderNewMovieElement(id, title, extraName, extraValue) {
+  const movieList = document.getElementById('movie-list');
+  const newMovieElement = document.createElement('li');
+  newMovieElement.innerHTML = `
+  <div>
+  <h2>${title}</h2>
+  <p>${extraName}: ${extraValue}</p>
+  </div>
+  `;
+  if (movies.length === 0) {
+    movieList.classList.remove('visible');
+    return;
+  } else {
+    movieList.classList.add('visible');
+  }
+
+  movieList.append(newMovieElement);
+}
+
 function addMovieHandler() {
   const title = document.getElementById('title').value;
   const extraName = document.getElementById('extra-name').value;
@@ -34,6 +53,30 @@ function addMovieHandler() {
   clearUserInput();
   localStorage.setItem('movies', JSON.stringify(movies));
   console.log(newMovie);
+  renderNewMovieElement(
+    newMovie.id,
+    newMovie.info.title,
+    extraName,
+    extraValue
+  );
 }
 
+movies.forEach((movie) => {
+  for (let key in movie.info) {
+    if (key !== 'title') {
+      renderNewMovieElement(movie.id, movie.info.title, key, movie.info[key]);
+    }
+  }
+});
+
+// movies.forEach((movie) => {
+//   renderNewMovieElement(
+//     movie.id,
+//     movie.info.title,
+//     movie.info.extraName,
+//     movie.info.extraValue
+//   );
+// });
+
 addMovieBtn.addEventListener('click', addMovieHandler);
+// localStorage.clear();
