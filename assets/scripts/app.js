@@ -10,56 +10,33 @@ function clearUserInput() {
   }
 }
 
-function renderNewMovieElement() {
+const renderNewMovieElement = (filter = '') => {
   const movieList = document.getElementById('movie-list');
 
   if (movies.length === 0) {
-    movieList.classList.remover('visible');
+    movieList.classList.remove('visible');
     return;
   } else {
     movieList.classList.add('visible');
   }
-  movieList.innerHtml = '';
+  movieList.innerHTML = '';
 
-  movies.forEach((movie) => {
-    const newMovieElement = document.createElement('li');
+  const filteredMovies = !filter
+    ? movies
+    : movies.filter((movie) => movie.info.title.toLowerCase().includes(filter));
+
+  filteredMovies.forEach((movie) => {
+    const movieEl = document.createElement('li');
     let text = movie.info.title + ' - ';
     for (const key in movie.info) {
       if (key !== 'title') {
         text = text + `${key}: ${movie.info[key]}`;
       }
     }
-    newMovieElement.textContent = text;
-    movieList.append(newMovieElement);
+    movieEl.textContent = text;
+    movieList.append(movieEl);
   });
-}
-
-// function renderNewMovieElement(id, title, extraName, extraValue) {
-//   const movieList = document.getElementById('movie-list');
-//   const newMovieElement = document.createElement('li');
-//   newMovieElement.innerHTML = `
-//   <div>
-//   <h2>${title}</h2>
-//   <p>${extraName}: ${extraValue}</p>
-//   </div>
-//   `;
-//   if (movies.length === 0) {
-//     movieList.classList.remove('visible');
-//     return;
-//   } else {
-//     movieList.classList.add('visible');
-//   }
-
-//   movieList.append(newMovieElement);
-// }
-
-// movies.forEach((movie) => {
-//   for (let key in movie.info) {
-//     if (key !== 'title') {
-//       renderNewMovieElement(movie.id, movie.info.title, key, movie.info[key]);
-//     }
-//   }
-// });
+};
 
 function addMovieHandler() {
   const title = document.getElementById('title').value;
@@ -82,54 +59,22 @@ function addMovieHandler() {
   };
 
   movies.push(newMovie);
-  clearUserInput();
   localStorage.setItem('movies', JSON.stringify(movies));
   console.log(newMovie);
-  renderNewMovieElement(
-    newMovie.id,
-    newMovie.info.title,
-    extraName,
-    extraValue
-  );
+  renderNewMovieElement();
+  clearUserInput();
 }
 
-function searchMovieHandler() {
-  const titleInput = document.getElementById('filter-title');
-  const title = titleInput.value.toLowerCase();
-  if (title.trim() === '') {
-    movies.forEach((movie) => {
-      for (let key in movie.info) {
-        if (key !== 'title') {
-          renderNewMovieElement(
-            movie.id,
-            movie.info.title,
-            key,
-            movie.info[key]
-          );
-        }
-      }
-    });
-  } else {
-    const filteredMovies = movies.filter((movie) =>
-      movie.info.title.toLowerCase().includes(title)
-    );
-    const movieList = document.getElementById('movie-list');
-    movieList.innerHTML = ''; // Clear existing movie elements
-    filteredMovies.forEach((movie) => {
-      for (let key in movie.info) {
-        if (key !== 'title') {
-          renderNewMovieElement(
-            movie.id,
-            movie.info.title,
-            key,
-            movie.info[key]
-          );
-        }
-      }
-    });
-  }
-}
+const searchMovieHandler = () => {
+  const filterTerm = document
+    .getElementById('filter-title')
+    .value.toLowerCase();
+  clearUserInput();
+  renderNewMovieElement(filterTerm);
+};
 
 addMovieBtn.addEventListener('click', addMovieHandler);
 searchMovieBtn.addEventListener('click', searchMovieHandler);
 // localStorage.clear();
+
+renderNewMovieElement();
