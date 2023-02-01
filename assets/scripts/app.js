@@ -10,32 +10,56 @@ function clearUserInput() {
   }
 }
 
-function renderNewMovieElement(id, title, extraName, extraValue) {
+function renderNewMovieElement() {
   const movieList = document.getElementById('movie-list');
-  const newMovieElement = document.createElement('li');
-  newMovieElement.innerHTML = `
-  <div>
-  <h2>${title}</h2>
-  <p>${extraName}: ${extraValue}</p>
-  </div>
-  `;
+
   if (movies.length === 0) {
-    movieList.classList.remove('visible');
+    movieList.classList.remover('visible');
     return;
   } else {
     movieList.classList.add('visible');
   }
+  movieList.innerHtml = '';
 
-  movieList.append(newMovieElement);
+  movies.forEach((movie) => {
+    const newMovieElement = document.createElement('li');
+    let text = movie.info.title + ' - ';
+    for (const key in movie.info) {
+      if (key !== 'title') {
+        text = text + `${key}: ${movie.info[key]}`;
+      }
+    }
+    newMovieElement.textContent = text;
+    movieList.append(newMovieElement);
+  });
 }
 
-movies.forEach((movie) => {
-  for (let key in movie.info) {
-    if (key !== 'title') {
-      renderNewMovieElement(movie.id, movie.info.title, key, movie.info[key]);
-    }
-  }
-});
+// function renderNewMovieElement(id, title, extraName, extraValue) {
+//   const movieList = document.getElementById('movie-list');
+//   const newMovieElement = document.createElement('li');
+//   newMovieElement.innerHTML = `
+//   <div>
+//   <h2>${title}</h2>
+//   <p>${extraName}: ${extraValue}</p>
+//   </div>
+//   `;
+//   if (movies.length === 0) {
+//     movieList.classList.remove('visible');
+//     return;
+//   } else {
+//     movieList.classList.add('visible');
+//   }
+
+//   movieList.append(newMovieElement);
+// }
+
+// movies.forEach((movie) => {
+//   for (let key in movie.info) {
+//     if (key !== 'title') {
+//       renderNewMovieElement(movie.id, movie.info.title, key, movie.info[key]);
+//     }
+//   }
+// });
 
 function addMovieHandler() {
   const title = document.getElementById('title').value;
